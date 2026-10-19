@@ -1,3 +1,4 @@
+/** @OnlyCurrentDoc */
 // We Brake for Wildlife Coffee Club: vote backend.
 // Paste into the sheet's Extensions > Apps Script, then Deploy > New deployment > Web app
 // (Execute as: Me, Who has access: Anyone). Copy the /exec URL into site/config.js.
