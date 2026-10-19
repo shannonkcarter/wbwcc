@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>WBW Coffee Club Map</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <link rel="stylesheet" href="style.css?v=5">
+</head>
+<body>
+  <header class="bar">
+    <div class="title">
+      <span class="emoji">🦎🦉🐸</span>
+      <div>
+        <h1>We Brake for Wildlife Coffee Club</h1>
+        <p id="stats">Loading…</p>
+      </div>
+    </div>
+    <div class="controls">
+      <label class="toggle"><input type="checkbox" id="heatToggle" checked> Route heatmap</label>
+      <button id="whoBtn" class="who" type="button">Set your name</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="map" aria-label="Map of coffee shops"></div>
+
+    <aside id="panel" class="panel">
+      <button id="panelHandle" class="handle" type="button" aria-expanded="false">
+        <span>🗳️ Vote for the rotation</span><span id="myCount" class="pill"></span>
+      </button>
+      <div class="panel-body">
+        <p class="hint">Tap a pin to see past runs and routes, then 👍 every shop you'd happily run from again. Vote for as many as you like.</p>
+        <div id="votingNotice" class="notice" hidden></div>
+        <ol id="board" class="board"></ol>
+        <details class="unvoted">
+          <summary id="unvotedSummary">Shops with no votes yet</summary>
+          <ul id="unvotedList"></ul>
+        </details>
+        <p class="legend">
+          <span class="dot open"></span> open
+          <span class="dot closed"></span> closed (not on the ballot)
+          <span class="dot mine"></span> you voted
+        </p>
+      </div>
+    </aside>
+  </main>
+
+  <dialog id="nameDialog">
+    <form method="dialog" id="nameForm">
+      <h2>Who's voting?</h2>
+      <p>Type your name the way the club knows you. Pick it from the list if you've voted before.</p>
+      <input id="nameInput" list="voterList" maxlength="40" autocomplete="name" required placeholder="e.g. Kelsey">
+      <datalist id="voterList"></datalist>
+      <div class="actions">
+        <button type="button" class="secondary" onclick="this.closest('dialog').close('cancel')">Cancel</button>
+        <button value="ok" type="submit">Start voting</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="config.js?v=5"></script>
+  <script src="app.js?v=5"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# secrets
+credentials.yml
+.strava_token.json
+# raw GPX (activities include untrimmed start/end points) and working data
+routes/
+data/
+*.csv
+.DS_Store
