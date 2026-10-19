@@ -6,7 +6,7 @@
   <title>WBW Coffee Club Map</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
 </head>
 <body>
   <header class="bar">
@@ -32,9 +32,12 @@
       </button>
       <section id="card" class="card" aria-live="polite" hidden></section>
       <div class="panel-body">
-        <p class="hint">Well Coffee Clubbers, we've hit just about every shop in Houston at this point! It's getting trickier for leaders to find new spots to run from, so let's rely on our extensive experience and pick some favorites to frequent.</p>
-        <p class="hint">Tap a pin to see past runs and routes, then 👍 every shop you'd like to see in our standard rotation. Please consider the full WBWCC experience: Is there sufficient parking? Pleasant route options? Quality coffee and pastries? Outdoor seating for puddle season? Cast your votes for the shops that you feel have high marks across the board. Vote for as many as you like!</p>
-        <p class="hint">The shops with the most votes will set our new set rotation, but of course we're always up for deviations! Just post in the chat whenever you want to lead us somewhere new.</p>
+        <details id="intro" class="intro" open>
+          <summary>How this vote works</summary>
+          <p class="hint">Well Coffee Clubbers, we've hit just about every shop in Houston at this point! It's getting trickier for leaders to find new spots to run from, so let's rely on our extensive experience and pick some favorites to frequent.</p>
+          <p class="hint">Tap a pin to see past runs and routes, then 👍 every shop you'd like to see in our standard rotation. Please consider the full WBWCC experience: Is there sufficient parking? Pleasant route options? Quality coffee and pastries? Outdoor seating for puddle season? Cast your votes for the shops that you feel have high marks across the board. Vote for as many as you like!</p>
+          <p class="hint">The shops with the most votes will set our new set rotation, but of course we're always up for deviations! Just post in the chat whenever you want to lead us somewhere new.</p>
+        </details>
         <div id="votingNotice" class="notice" hidden></div>
         <ol id="board" class="board"></ol>
         <details class="unvoted">
@@ -65,7 +68,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-  <script src="config.js?v=10"></script>
-  <script src="app.js?v=10"></script>
+  <script src="config.js?v=11"></script>
+  <script src="app.js?v=11"></script>
 </body>
 </html>

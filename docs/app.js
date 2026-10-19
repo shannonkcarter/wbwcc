@@ -325,6 +325,9 @@
     initMap(allRoutes);
     applyTally(await fetchVotes().catch(() => ({ votes: {}, voters: [] })));
 
+    // intro starts open on someone's first visit, collapsed after that
+    if (load('wbw_intro_seen')) $('intro').open = false;
+    save('wbw_intro_seen', '1');
     $('whoBtn').addEventListener('click', () => askName());
     $('panelHandle').addEventListener('click', () => {
       const p = $('panel');
