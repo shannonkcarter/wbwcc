@@ -14,7 +14,7 @@
     me: load('wbw_name') || '',
     pending: 0,
   };
-  let map, heatLayer, highlightLayer, popupShop = null;
+  let map, heatLayer, highlightLayer, selected = null;
   const markers = new Map();
 
   // ---------- storage helpers (may be blocked in private windows) ----------
@@ -133,27 +133,24 @@
     if ($('heatToggle').checked) heatLayer.addTo(map);
     highlightLayer = L.layerGroup().addTo(map);
 
-    // On mouse devices a hover opens the popup; it stays open (so the 👍 is reachable) until another
-    // pin is hovered or the map is clicked. Auto-pan is off there, or the map would slide under the cursor.
+    // Shop details live in a card in the side panel (bottom sheet on phones), never over the map,
+    // so the highlighted route stays visible. Mouse: hover selects. Touch: tap selects.
     let hoverTimer;
     const bounds = [];
     state.shops.forEach(shop => {
-      const m = L.circleMarker([shop.lat, shop.lon], { bubblingMouseEvents: false })
-        .bindPopup(() => popupContent(shop), { maxWidth: 300, autoPan: !HOVER, autoPanPadding: [20, 70] })
-        .on('popupopen', () => { popupShop = shop; showRoutes(shop); })
-        .on('popupclose', () => { if (popupShop === shop) popupShop = null; highlightLayer.clearLayers(); })
+      const m = L.circleMarker([shop.lat, shop.lon], { ...styleMarker(shop), bubblingMouseEvents: false })
+        .on('click', () => select(shop, { move: !HOVER }))
         .addTo(map);
       if (HOVER) {
         m.on('mouseover', () => {
           clearTimeout(hoverTimer);
-          hoverTimer = setTimeout(() => { if (!m.isPopupOpen()) m.openPopup(); }, 120);  // skip pins swept past
+          hoverTimer = setTimeout(() => { if (selected !== shop) select(shop); }, 120);  // skip pins swept past
         }).on('mouseout', () => clearTimeout(hoverTimer));
-      } else {
-        m.bindTooltip(shop.name, { direction: 'top', offset: [0, -6] });
       }
       markers.set(shop.name, m);
       bounds.push([shop.lat, shop.lon]);
     });
+    map.on('click', () => select(null));
     // fit all shops, then one level closer: the dense core matters more than the outliers
     map.fitBounds(bounds, { padding: [30, 30], animate: false });
     map.setZoom(map.getZoom() + 1, { animate: false });
@@ -165,9 +162,11 @@
     const n = voteCount(shop.name);
     const r = 7 + 2.2 * Math.sqrt(n);
     if (shop.status === 'closed') {
-      return { radius: 5, color: css('--closed'), weight: 2, fillColor: '#fff', fillOpacity: 0.9 };
+      return { radius: selected === shop ? 7 : 5, color: selected === shop ? css('--ink') : css('--closed'),
+               weight: 2, fillColor: '#fff', fillOpacity: 0.9 };
     }
-    return { radius: r, color: '#fff', weight: 1.5, fillOpacity: 0.95,
+    const ring = selected === shop ? { color: css('--ink'), weight: 3 } : { color: '#fff', weight: 1.5 };
+    return { radius: r, ...ring, fillOpacity: 0.95,
              fillColor: iVoted(shop.name) ? css('--mine') : css('--coffee') };
   }
 
@@ -185,11 +184,28 @@
     return n;
   }
 
-  function popupContent(shop) {
+  function select(shop, { move = false } = {}) {
+    selected = shop;
+    shop ? showRoutes(shop) : highlightLayer.clearLayers();
+    render();
+    if (shop) markers.get(shop.name).bringToFront();
+    if (shop && move) {
+      // fit the pin and its routes into the part of the map not covered by the bottom sheet
+      const pts = [[shop.lat, shop.lon], ...shop.routes.flatMap(rt => rt.coords)];
+      const sheet = window.matchMedia('(max-width: 720px)').matches ? $('panel').offsetHeight : 0;
+      map.flyToBounds(L.latLngBounds(pts), {
+        paddingTopLeft: [24, 24], paddingBottomRight: [24, sheet + 24], maxZoom: 15, duration: 0.6,
+      });
+    }
+  }
+
+  function cardContent(shop) {
     const closed = shop.status === 'closed';
     const h = el('h3', {}, shop.name);
     if (closed) h.append(el('span', { class: 'closed-badge' }, 'CLOSED'));
-    const box = el('div', { class: 'pop' }, h);
+    const x = el('button', { class: 'card-close', type: 'button', 'aria-label': 'Close' }, '×');
+    x.addEventListener('click', () => select(null));
+    const box = el('div', { class: 'pop' }, x, h);
     if (shop.address) box.append(el('p', { class: 'addr' }, shop.address));
     if (shop.notes) box.append(el('p', { class: 'note' }, shop.notes));
 
@@ -228,22 +244,20 @@
     });
     li.addEventListener('mouseleave', () => {
       markers.get(shop.name).setStyle(styleMarker(shop));
-      popupShop ? showRoutes(popupShop) : highlightLayer.clearLayers();
+      selected ? showRoutes(selected) : highlightLayer.clearLayers();
     });
   }
 
   function focusShop(name) {
-    const m = markers.get(name);
-    if (!m) return;
     if (window.matchMedia('(max-width: 720px)').matches) $('panel').classList.remove('open');
-    map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 15), { duration: 0.6 });
-    map.once('moveend', () => m.openPopup());
+    select(state.shops.get(name), { move: true });
   }
 
   // ---------- panel ----------
   function render() {
     markers.forEach((m, name) => m.setStyle(styleMarker(state.shops.get(name))));
-    if (popupShop) markers.get(popupShop.name).setPopupContent(popupContent(popupShop));
+    $('card').hidden = !selected;
+    $('card').replaceChildren(...(selected ? [cardContent(selected)] : []));
 
     const openShops = [...state.shops.values()].filter(s => s.status !== 'closed');
     const ranked = openShops.filter(s => voteCount(s.name)).sort((a, b) =>

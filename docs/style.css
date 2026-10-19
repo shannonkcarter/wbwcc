@@ -85,9 +85,19 @@ main { flex: 1; display: flex; min-height: 0; position: relative; }
 .dot.closed { background: transparent; border: 2px solid var(--closed); }
 .dot.mine { background: var(--mine); }
 
-/* Popup */
-.leaflet-popup-content { margin: 12px 14px; min-width: 230px; font-size: 14px; }
-.pop h3 { margin: 0 0 2px; font-size: 16px; }
+/* Shop card (top of the side panel; inside the bottom sheet on phones) */
+.card {
+  padding: 14px 16px; border-bottom: 1px solid var(--line);
+  background: var(--coffee-soft); border-left: 4px solid var(--route);
+}
+.card[hidden] { display: none; }
+.pop { position: relative; font-size: 14px; }
+.card-close {
+  position: absolute; top: -6px; right: -6px; border: 0; background: none;
+  font-size: 22px; line-height: 1; color: var(--muted); padding: 4px 8px;
+}
+.card-close:hover { color: var(--ink); }
+.pop h3 { margin: 0 28px 2px 0; font-size: 16px; }
 .pop .addr { color: var(--muted); font-size: 12px; margin: 0 0 8px; }
 .pop .closed-badge { display: inline-block; background: #eee; color: #57534e; border-radius: 4px; padding: 1px 6px; font-size: 11px; font-weight: 700; margin-left: 6px; vertical-align: middle; }
 .pop .note { font-style: italic; margin: 0 0 8px; }
