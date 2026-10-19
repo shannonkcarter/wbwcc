@@ -154,8 +154,9 @@
       markers.set(shop.name, m);
       bounds.push([shop.lat, shop.lon]);
     });
-    // extra room at the top so popups on the northernmost pins aren't cut off
-    map.fitBounds(bounds, { paddingTopLeft: [30, HOVER ? 200 : 30], paddingBottomRight: [30, 30] });
+    // fit all shops, then one level closer: the dense core matters more than the outliers
+    map.fitBounds(bounds, { padding: [30, 30], animate: false });
+    map.setZoom(map.getZoom() + 1, { animate: false });
 
     $('heatToggle').addEventListener('change', e => e.target.checked ? heatLayer.addTo(map) : heatLayer.remove());
   }
