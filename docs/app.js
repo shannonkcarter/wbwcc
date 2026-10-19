@@ -115,7 +115,7 @@
 
   // ---------- map ----------
   function initMap(allRoutes) {
-    map = L.map('map', { renderer: L.canvas({ tolerance: 10 }) });  // tolerance = bigger tap target
+    map = L.map('map', { renderer: L.canvas({ tolerance: 10 }), zoomSnap: 0.5 });  // tolerance = bigger tap target
     const esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
     L.tileLayer(esri + 'World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 16, attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors',
@@ -151,9 +151,9 @@
       bounds.push([shop.lat, shop.lon]);
     });
     map.on('click', () => select(null));
-    // fit all shops, then one level closer: the dense core matters more than the outliers
+    // fit all shops, then half a level closer: the dense core matters more than the outliers
     map.fitBounds(bounds, { padding: [30, 30], animate: false });
-    map.setZoom(map.getZoom() + 1, { animate: false });
+    map.setZoom(map.getZoom() + 0.5, { animate: false });
 
     $('heatToggle').addEventListener('change', e => e.target.checked ? heatLayer.addTo(map) : heatLayer.remove());
   }
