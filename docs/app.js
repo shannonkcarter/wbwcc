@@ -135,6 +135,7 @@
 
     // Shop details live in a card in the side panel (bottom sheet on phones), never over the map,
     // so the highlighted route stays visible. Mouse: hover selects. Touch: tap selects.
+    $('votesToggle').checked = load('wbw_show_votes') !== '0';
     let hoverTimer;
     const bounds = [];
     state.shops.forEach(shop => {
@@ -156,18 +157,20 @@
     map.setZoom(map.getZoom() + 0.5, { animate: false });
 
     $('heatToggle').addEventListener('change', e => e.target.checked ? heatLayer.addTo(map) : heatLayer.remove());
+    // plain pins: same size and color for every open shop, ignoring votes (remembered per browser)
+    $('votesToggle').addEventListener('change', e => { save('wbw_show_votes', e.target.checked ? '1' : '0'); render(); });
   }
 
   function styleMarker(shop) {
-    const n = voteCount(shop.name);
-    const r = 7 + 2.2 * Math.sqrt(n);
+    const showVotes = $('votesToggle').checked;
+    const r = showVotes ? 7 + 2.2 * Math.sqrt(voteCount(shop.name)) : 7;
     if (shop.status === 'closed') {
       return { radius: selected === shop ? 7 : 5, color: selected === shop ? css('--ink') : css('--closed'),
                weight: 2, fillColor: '#fff', fillOpacity: 0.9 };
     }
     const ring = selected === shop ? { color: css('--ink'), weight: 3 } : { color: '#fff', weight: 1.5 };
     return { radius: r, ...ring, fillOpacity: 0.95,
-             fillColor: iVoted(shop.name) ? css('--mine') : css('--coffee') };
+             fillColor: showVotes && iVoted(shop.name) ? css('--mine') : css('--coffee') };
   }
 
   function showRoutes(shop) {
