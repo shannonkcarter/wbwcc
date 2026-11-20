@@ -131,7 +131,12 @@ dialog input { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; 
 @media (max-width: 720px) {
   h1 { font-size: 14px; }
   .emoji { display: none; }
-  .toggle { display: none; }
+  /* second header row: toggles on the left, name button on the right */
+  .bar { flex-wrap: wrap; row-gap: 6px; padding: 8px 12px; }
+  .controls { width: 100%; gap: 14px; }
+  .toggle { padding: 4px 0; }  /* taller tap target */
+  .toggle input { width: 16px; height: 16px; margin: 0 2px 0 0; }
+  .who { margin-left: auto; }
   .panel {
     position: absolute; left: 0; right: 0; bottom: 0; width: auto; z-index: 1000;
     border-left: 0; border-top: 1px solid var(--line); border-radius: 14px 14px 0 0;
