@@ -6,3 +6,4 @@ routes/
 data/
 *.csv
 .DS_Store
+.Rproj.user
